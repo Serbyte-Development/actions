@@ -67,7 +67,7 @@ on:
 
 jobs:
   notify:
-    uses: Serbyte-Development/Serbyte-Actions/.github/workflows/send_commit_email.yaml@v1
+    uses: Serbyte-Development/actions/.github/workflows/send_commit_email.yaml@v1
     secrets: inherit
 ```
 
@@ -91,7 +91,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: Serbyte-Development/Serbyte-Actions@v1
+      - uses: Serbyte-Development/actions@v1
         id: summarize
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

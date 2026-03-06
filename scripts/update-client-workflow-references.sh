@@ -2,10 +2,10 @@
 set -euo pipefail
 
 ORG="${ORG:-Serbyte-Development}"
-ACTION_REPO="${ACTION_REPO:-Serbyte-Actions}"
+ACTION_REPO="${ACTION_REPO:-actions}"
 OLD_REF="${OLD_REF:-Austin1serb/Serbyte-Actions/.github/workflows/send_commit_email.yaml@main}"
-NEW_REF="${NEW_REF:-Serbyte-Development/Serbyte-Actions/.github/workflows/send_commit_email.yaml@v1}"
-BRANCH_NAME="${BRANCH_NAME:-codex/update-serbyte-actions-ref}"
+NEW_REF="${NEW_REF:-Serbyte-Development/actions/.github/workflows/send_commit_email.yaml@v1}"
+BRANCH_NAME="${BRANCH_NAME:-codex/update-actions-ref}"
 MODE="${MODE:-dry-run}"
 
 if ! command -v gh >/dev/null 2>&1; then
@@ -71,15 +71,15 @@ while IFS=$'\t' read -r repo default_branch; do
     fi
 
     git add .github/workflows
-    git commit -m "Update Serbyte-Actions reusable workflow reference" >/dev/null
+    git commit -m "Update actions reusable workflow reference" >/dev/null
     git push -u origin "$BRANCH_NAME" >/dev/null
 
     gh pr create \
       --repo "$repo" \
       --base "$default_branch" \
       --head "$BRANCH_NAME" \
-      --title "Update Serbyte-Actions workflow reference" \
-      --body "Updates the reusable workflow reference from the old personal-account path to the org-owned Serbyte-Actions repo."
+      --title "Update actions workflow reference" \
+      --body "Updates the reusable workflow reference from the old personal-account path to the org-owned actions repo."
   )
 
   echo "  PR opened."

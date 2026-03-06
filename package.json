@@ -1,5 +1,5 @@
 {
-  "name": "serbyte-actions",
+  "name": "actions",
   "version": "1.0.4",
   "main": "dist/index.js",
   "scripts": {
