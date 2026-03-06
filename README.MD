@@ -48,9 +48,9 @@ Serbyte Actions/
 | Secret | Purpose |
 |--------|---------|
 | `OPENAI_API_KEY` | Auth for OpenAI Chat Completions. |
-| `EMAIL_USERNAME` | SMTP user (e.g. Gmail address). |
-| `EMAIL_PASSWORD` | SMTP password / app-specific password / token. |
-| `EMAIL_TO` | Comma-separated list of recipient addresses. |
+| `SMTP_USERNAME` | SMTP user (e.g. Gmail address). |
+| `SMTP_PASSWORD` | SMTP password / app-specific password / token. |
+| `CLIENT_EMAIL` | Client recipient e-mail address. |
 
 *(Add at **org** or **repo** level → Settings → Secrets → Actions.)*
 
@@ -63,19 +63,19 @@ Serbyte Actions/
 name: Client Updates
 on:
   push:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   notify:
-    uses: serbyte/commit-email-action/.github/workflows/send_commit_email.yml@v1
-    secrets: inherit    # passes OPENAI & SMTP secrets through
+    uses: Serbyte-Development/Serbyte-Actions/.github/workflows/send_commit_email.yaml@v1
+    secrets: inherit
 ```
 
-That’s all you need in each project repo.
+Set `OPENAI_API_KEY`, `SMTP_USERNAME`, and `SMTP_PASSWORD` as org secrets, then set `CLIENT_EMAIL` per repo. With `secrets: inherit`, the caller workflow stays minimal.
 
 ---
 
-## 📄 Full reusable workflow (`send_commit_email.yml`)
+## 📄 Full reusable workflow (`send_commit_email.yaml`)
 
 If you prefer to copy instead of `uses:`:
 
@@ -83,7 +83,7 @@ If you prefer to copy instead of `uses:`:
 name: Summarise & E-mail
 on:
   push:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   send:
@@ -91,7 +91,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: serbyte/commit-email-action@v1
+      - uses: Serbyte-Development/Serbyte-Actions@v1
         id: summarize
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -101,11 +101,11 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
           subject: "🚀 Update for ${{ github.repository }} – ${{ github.ref_name }}"
-          to: ${{ secrets.EMAIL_TO }}
-          from: Serbyte Bot <${{ secrets.EMAIL_USERNAME }}>
+          to: ${{ secrets.CLIENT_EMAIL }}
+          from: Serbyte Bot <${{ secrets.SMTP_USERNAME }}>
           content_type: text/html
           body: ${{ steps.summarize.outputs.email_body }}
 ```

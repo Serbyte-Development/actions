@@ -1,4 +1,4 @@
-# .github/workflows/send_commit_email.yml
+# .github/workflows/send_commit_email.yaml
 name: Summarize & Email
 
 on:
@@ -16,17 +16,13 @@ on:
 jobs:
   send:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
-      - name: Debug key length (will not leak)
-        run: |
-          echo -n "$OPENAI_API_KEY" | wc -c
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
       - name: Summarize commits with OpenAI
-        uses: Austin1serb/Serbyte-Actions@v1
+        uses: Serbyte-Development/Serbyte-Actions@v1
         id: summarize
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
