@@ -8,6 +8,10 @@ on:
         required: false
         type: string
         default: gpt-4o-mini
+      site_label:
+        required: false
+        type: string
+        default: ""
     secrets:
       OPENAI_API_KEY:
         required: true
@@ -31,6 +35,7 @@ jobs:
         id: summarize
         with:
           openai-model: ${{ inputs.openai_model }}
+          site-label: ${{ inputs.site_label }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
@@ -41,7 +46,7 @@ jobs:
           server_port: 465
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "Website Update: New Changes Implemented - ${{ github.repository }}"
+          subject: "Website Update: New Changes Implemented - ${{ inputs.site_label || github.repository }}"
           to: ${{ secrets.CLIENT_EMAIL }}
           from: Serbyte Bot <${{ secrets.SMTP_USERNAME }}>
           html_body: ${{ steps.summarize.outputs.email_body }}

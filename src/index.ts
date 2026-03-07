@@ -31,10 +31,10 @@ async function run() {
 
     if (!summary) throw new Error("Empty OpenAI response");
 
-    const repoName = github.context.repo.repo;
+    const siteLabel = core.getInput("site-label") || github.context.repo.repo;
 
-    // Fill {{BODY}} and {{REPO_NAME}} inside full email template
-    const finalEmail = emailTemplate.replace("{{BODY}}", summary).replace(/{{REPO_NAME}}/g, repoName);
+    // Fill {{BODY}} and {{SITE_LABEL}} inside full email template
+    const finalEmail = emailTemplate.replace("{{BODY}}", summary).replace(/{{SITE_LABEL}}/g, siteLabel);
     core.notice(`finalEmail: ${finalEmail}`);
 
     core.setOutput("email_body", finalEmail);

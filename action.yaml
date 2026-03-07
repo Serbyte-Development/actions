@@ -10,6 +10,10 @@ inputs:
     description: "OpenAI chat model ID (e.g., gpt-4o-mini)"
     required: false
     default: "gpt-4o-mini"
+  site-label:
+    description: "Site label to use in the e-mail subject and template"
+    required: false
+    default: ""
 
 outputs:
   email_body:

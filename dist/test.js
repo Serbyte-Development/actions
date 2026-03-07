@@ -25,9 +25,9 @@ async function mockRun() {
         const summary = completion?.choices?.[0]?.message?.content?.trim();
         if (!summary)
             throw new Error("Empty OpenAI response");
-        const repoName = "automedicskirkland";
-        // Fill {{BODY}} and {{REPO_NAME}} inside full email template
-        const finalEmail = assets_1.emailTemplate.replace("{{BODY}}", summary).replace(/{{REPO_NAME}}/g, repoName);
+        const siteLabel = "automedicskirkland.com";
+        // Fill {{BODY}} and {{SITE_LABEL}} inside full email template
+        const finalEmail = assets_1.emailTemplate.replace("{{BODY}}", summary).replace(/{{SITE_LABEL}}/g, siteLabel);
         // Instead of core.setOutput, just log it
         console.log("🔥 FINAL EMAIL:");
         console.log(finalEmail);

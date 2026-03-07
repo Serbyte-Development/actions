@@ -25,7 +25,7 @@ Serbyte Actions/
 ├─ src/
 │  ├─ index.ts        # action logic
 │  ├─ prompt.md       # system prompt
-│  ├─ email.html      # HTML template (uses {{BODY}}) and {{REPO_NAME}}
+│  ├─ email.html      # HTML template (uses {{BODY}}) and {{SITE_LABEL}}
 │  └─ test.ts         # local dry-run harness
 ├─ scripts/embed-assets.ts  # embeds prompt & template into assets.ts
 ├─ action.yml         # Action entrypoint

@@ -9,4 +9,9 @@ jobs:
     uses: Serbyte-Development/actions/.github/workflows/send_commit_email.yaml@v1
     with:
       openai_model: gpt-4.1-mini
-    secrets: inherit
+      site_label: "My Next.js Starter"
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
