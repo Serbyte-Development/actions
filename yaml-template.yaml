@@ -1,0 +1,12 @@
+name: Commit Email Summary
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  email_summary:
+    uses: Serbyte-Development/actions/.github/workflows/send_commit_email.yaml@v1
+    with:
+      openai_model: gpt-4.1-mini
+    secrets: inherit

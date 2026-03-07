@@ -7,3 +7,6 @@ test_prompt_loading.sh
 
 # all python files
 *.py
+
+
+set-secrets.mjs
