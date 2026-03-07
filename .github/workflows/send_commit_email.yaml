@@ -3,6 +3,11 @@ name: Summarize & Email
 
 on:
   workflow_call:
+    inputs:
+      openai_model:
+        required: false
+        type: string
+        default: gpt-4o-mini
     secrets:
       OPENAI_API_KEY:
         required: true
@@ -24,6 +29,8 @@ jobs:
       - name: Summarize commits with OpenAI
         uses: Serbyte-Development/actions@v1
         id: summarize
+        with:
+          openai-model: ${{ inputs.openai_model }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
