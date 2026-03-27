@@ -1,172 +1,87 @@
- # Commit-Email-Action
+# Summarize commits & send client email
 
-> **Turn every commit into a polished status update — automatically.**  
-> Summarises Git commit messages with OpenAI and e-mails your clients the results via any SMTP account, wrapped in a beautiful HTML template.
+Turn recent commits into polished client-facing update emails automatically.
 
----
+This action uses OpenAI to summarize commit activity and generate an HTML email you can send to clients via SMTP.
 
-## ✨ Why use this action?
+## Features
 
-| Feature | Description |
-|---------|-------------|
-| **AI-quality summaries** | Converts raw commit messages into concise, client-friendly prose using your chosen OpenAI model. |
-| **Drop-in reusable** | Consume with one line of YAML (`uses: serbyte/commit-email-action@v1`) from any repository. |
-| **SMTP** | Works only with Gmail at this time (via `dawidd6/action-send-mail`). |
-| **Production-grade build** | Self-contained bundle — no runtime file reads, no external assets. |
-| **Security first** | All credentials injected via GitHub Secrets; nothing hard-coded. |
+- Summarizes recent commit messages with OpenAI
+- Rewrites technical changes into client-friendly language
+- Generates HTML and Markdown summary outputs
+- Works with reusable workflows across many client repos
 
----
-
-## 🏗 Repository layout
-
-```yaml
-Serbyte Actions/
-├─ dist/              # compiled bundle (checked-in after build)
-├─ src/
-│  ├─ index.ts        # action logic
-│  ├─ prompt.md       # system prompt
-│  ├─ email.html      # HTML template (uses {{BODY}}) and {{SITE_LABEL}}
-│  └─ test.ts         # local dry-run harness
-├─ scripts/embed-assets.ts  # embeds prompt & template into assets.ts
-├─ action.yml         # Action entrypoint
-├─ .github/workflows/release.yml
-└─ package.json
-```
-
----
-
-## 🔧 Inputs
+## Inputs
 
 | Name | Required | Default | Description |
-|------|----------|---------|-------------|
-| `openai-model` | ❌ | `gpt-4o-mini` | Any chat-completion model ID understood by the OpenAI API. |
+|---|---|---:|---|
+| `openai-model` | No | `gpt-4o-mini` | OpenAI model used to generate the summary |
+| `site-label` | No | `""` | Optional site or client label |
 
----
+## Outputs
 
-## 🔐 Secrets
+| Name | Description |
+|---|---|
+| `email_body` | Generated HTML email body |
+| `summary_md` | Generated Markdown summary |
 
-| Secret | Purpose |
-|--------|---------|
-| `OPENAI_API_KEY` | Auth for OpenAI Chat Completions. |
-| `SMTP_USERNAME` | SMTP user (e.g. Gmail address). |
-| `SMTP_PASSWORD` | SMTP password / app-specific password / token. |
-| `CLIENT_EMAIL` | Client recipient e-mail address. |
+## Required secrets
 
-*(Add at **org** or **repo** level → Settings → Secrets → Actions.)*
+- `OPENAI_API_KEY`
+- `SMTP_USERNAME`
+- `SMTP_PASSWORD`
+- `CLIENT_EMAIL`
 
----
-
-## ⚡ Quick start (`workflow_call` style)
+## Reusable workflow usage
 
 ```yaml
-# .github/workflows/commit-emailer.yml
-name: Client Updates
+name: Commit Email Summary
+
 on:
   push:
     branches: [main, master]
 
 jobs:
-  notify:
+  email_summary:
     uses: Serbyte-Development/actions/.github/workflows/send_commit_email.yaml@v1
+    with:
+      site_label: "Acme Dental"
     secrets: inherit
 ```
 
-Set `OPENAI_API_KEY`, `SMTP_USERNAME`, and `SMTP_PASSWORD` as org secrets, then set `CLIENT_EMAIL` per repo. With `secrets: inherit`, the caller workflow stays minimal.
-
----
-
-## 📄 Full reusable workflow (`send_commit_email.yaml`)
-
-If you prefer to copy instead of `uses:`:
+## Direct action usage
 
 ```yaml
-name: Summarise & E-mail
+name: Send Client Update
+
 on:
   push:
     branches: [main, master]
 
 jobs:
-  send:
+  send_update:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - uses: Serbyte-Development/actions@v1
+      - name: Generate summary
         id: summarize
+        uses: Serbyte-Development/actions@v1
+        with:
+          openai-model: gpt-4o-mini
+          site-label: Acme Dental
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
-      - name: Send e-mail
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "🚀 Update for ${{ github.repository }} – ${{ github.ref_name }}"
-          to: ${{ secrets.CLIENT_EMAIL }}
-          from: Serbyte Bot <${{ secrets.SMTP_USERNAME }}>
-          content_type: text/html
-          body: ${{ steps.summarize.outputs.email_body }}
 ```
 
----
+## Notes
 
-## 🧑‍💻 Local development
+- Reusable workflow inputs use underscores: `site_label`, `openai_model`
+- Direct action inputs use hyphens: `site-label`, `openai-model`
 
-```bash
-# Install deps
-npm ci
-
-# Dry-run with mock commits (requires OPENAI_API_KEY in env)
-npm run local-test
-
-# Build bundle (embeds assets & compiles)
-npm run build
-```
-
----
-
-## 🚀 Release workflow
-
-Every push to **`main`**:
-
-1. Runs `npm run build`.
-2. Verifies `dist/` is clean.
-3. Tags commit with version from `package.json` (`v1.2.3`) and moves the floating `v1` tag.
-4. Publishes a GitHub Release with autogenerated notes.  
-   *(See `.github/workflows/release.yml` for details.)*
-
-Bump versions with standard npm commands:
-
-```bash
-npm version patch   # or minor / major
-git push
-```
-
----
-
-## 📝 Template & prompt customisation
-
-- **`src/email.html`** — edit freely; keep the single `{{BODY}}` placeholder.
-- **`src/prompt.md`** — tweak summarisation rules or examples.  
-- Run `npm run build` and commit the updated `dist/` to ship changes.
-
----
-
-## 🙌 Contributing
-
-1. Fork & clone.
-2. `npm ci && npm run local-test`.
-3. Make changes, add tests.
-4. `npm run build` and commit both `src/` and `dist/`.
-5. Open a PR.
-
----
-
-## 📜 License
+## License
 
 [MIT](LICENSE)
 
-Built with ❤️ by **Serbyte** — Let your code speak for itself.
- 
+Built by [Serbyte Development](https://www.serbyte.net) 
