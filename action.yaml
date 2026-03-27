@@ -7,12 +7,12 @@ branding:
   color: "blue"
 
 inputs:
-  openai-model:
+  openai_model:
     description: "OpenAI model to use for generating the client update summary."
     required: false
     default: "gpt-4o-mini"
 
-  site-label:
+  site_label:
     description: "Optional site or client label used in the email subject and content."
     required: false
     default: ""
