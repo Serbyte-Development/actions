@@ -1,5 +1,5 @@
 name: "Summarize commits & send client email"
-description: "Turn recent commits into a polished client-facing update email with OpenAI and send it via SMTP."
+description: "Summarize recent commits with OpenAI and send polished client update emails via SMTP."
 author: "Serbyte (Austin Serb)"
 
 branding:
