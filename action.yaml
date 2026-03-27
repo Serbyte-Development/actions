@@ -1,25 +1,28 @@
 name: "Summarize commits & send client email"
-description: "Summarizes recent commit messages with OpenAI and e sends an email"
+description: "Turn recent commits into a polished client-facing update email with OpenAI and send it via SMTP."
 author: "Serbyte (Austin Serb)"
+
 branding:
   icon: "mail"
   color: "blue"
 
 inputs:
   openai-model:
-    description: "OpenAI chat model ID (e.g., gpt-4o-mini)"
+    description: "OpenAI model to use for generating the client update summary."
     required: false
     default: "gpt-4o-mini"
+
   site-label:
-    description: "Site label to use in the e-mail subject and template"
+    description: "Optional site or client label used in the email subject and content."
     required: false
     default: ""
 
 outputs:
   email_body:
-    description: "HTML-formatted summary (ready for sending)"
+    description: "Generated HTML email body."
+
   summary_md:
-    description: "Markdown summary (for logs/PRs)"
+    description: "Generated Markdown summary of recent commits."
 
 runs:
   using: "node20"
